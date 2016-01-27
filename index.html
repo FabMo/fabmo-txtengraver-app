@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en"> 
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1" charset="utf-8"/>
+<link rel="stylesheet" href="css/jquery.mobile-1.4.5.css">
+
+
+<script src="js/libs/dashboard.js"></script>
+<script src="js/jquery-1.11.2.min.js"></script>
+<script src="js/control.js"></script>
+<script src="js/config.js"></script>
+<script src="js/jquery.mobile-1.4.5.js"></script>
+<script src="js/processing.min.js"></script>
+<script src="js/opentype.min.js"></script>
+<script src="js/snap.svg-min.js"></script>
+<script src="js/clipper.js"></script>
+
+
+</head>
+<style>
+
+#run{
+position: absolute;
+left: 0;
+top:0;
+}
+
+#3D{
+
+position: absolute;
+top:0;
+left:0;
+}
+
+</style>
+
+<body onload="reload();">
+<div data-role="page" id="pagezero">
+  <div data-role="header">
+    <h1>SELECT A FONT</h1>
+    <div data-role="navbar">
+      <ul>
+        <li><a href="#pagezero" class="ui-btn-active ui-state-persist">SETUP</a></li>
+        <li><a href="#pageone" onclick="reload();">TXT MAKER</a></li>
+<!--        <li><a href="#pagetwo">PREVIEW</a></li> -->
+      </ul>
+    </div>
+  </div>
+  <div data-role="main" class="ui-content">
+<!--
+<textarea id="keyboard" placeholder="Enter Text..."></textarea>
+
+      <label for="text">TEXT:</label>
+      <input type="text" name="text" id="text" value="Hello!">
+-->
+    <form method="post">
+      <fieldset class="ui-field-contain">
+        <label for="font">FONT</label>
+        <select name="font" id="font">
+          <option value="ChicagoFLF.ttf">Chicago</option>
+          <option value="junegull.ttf" selected>Junegull</option>          
+          <option value="newmars.ttf">New Mars</option>
+          <option value="Roboto-Black.ttf">Roboto</option>
+          <option value="square-deal.ttf">SquareDeal</option>
+          <option value="Ubuntu-Title.ttf">Ubuntu</option>
+        </select>
+      </fieldset>
+    </form>
+
+    <form method="post">
+      <fieldset class="ui-field-contain">
+
+<!--
+      <label for="size">FONT SIZE (MM):</label>
+      <input type="range" name="size" id="size" value="75" step="1" min="50" max="175">
+-->
+
+         <label for="size">FONT SIZE</label>
+         <select name="size" id="size">
+<!--
+          <option value="12.6">1/2"</option>
+          <option value="25.4">1"</option>
+          <option value="50.8">2"</option>
+-->
+          <option value="76.2" selected>0.75"</option>
+<!--
+          <option value="101.6">4"</option>
+          <option value="127">5"</option>
+          <option value="152.4">6"</option> 
+-->
+
+
+        </select>
+      </fieldset>
+    </form>
+
+    <form method="post">
+      <fieldset class="ui-field-contain">
+        <label for="material">ENGRAVE DEPTH</label>
+        <select name="thickness" id="thickness">
+          <option value="0.25" selected>0.01"</option>
+<!--
+          <option value="0.135">1/8"</option>
+          <option value="0.26">1/4"</option>
+          <option value="0.51">1/2"</option>
+-->
+        </select>
+      </fieldset>
+    </form>
+
+    <form method="post">
+      <fieldset class="ui-field-contain">
+        <label for="material">MATERIAL TYPE</label>
+        <select name="material" id="material">
+          <option value="feed:1000,plunge:200" selected>PLYWOOD</option>
+        </select>
+      </fieldset>
+    </form>
+
+
+
+    <form method="post">
+      <fieldset class="ui-field-contain">
+        <label for="day">CUTTING TOOL</label>
+        <select name="tool" id="tool">
+<!--
+          <option value="0.0313">1/32" ENDMILL</option>
+          <option value="0.0625">1/16" ENDMILL</option>
+-->
+          <option value="0.12" selected>1/32" ENDMILL</option>
+<!--
+          <option value="0.25">1/4" ENDMILL</option>
+-->
+        </select>
+      </fieldset>
+    </form>
+</div>
+  <div data-role="footer" style="text-align:center;">
+    <a href="#pagezero" class="ui-btn ui-corner-all ui-shadow ui-icon-eye ui-btn-icon-left" onclick="toggleFullScreen();">FULLSCREEN</a>
+
+    <a href="#pageone" onclick="reload();" class="ui-btn ui-corner-all ui-shadow ui-icon-carat-r ui-btn-icon-right">TEXT</a>
+  </div>
+</div> 
+
+<div data-role="page" id="pageone">
+  <div data-role="header">
+    <h1>PRESS A KEY</h1>
+    <div data-role="navbar">
+      <ul>
+        <li><a href="#pagezero">SETUP</a></li>
+        <li><a href="#pageone" onclick="reload();" class="ui-btn-active ui-state-persist">TXT MAKER</a></li>
+<!--        <li><a href="#pagetwo">PREVIEW</a></li> -->
+      </ul>
+    </div>
+  </div>
+  <div data-role="main" class="ui-content">
+    <canvas id="2D" tabindex="1"> </canvas>
+   <!--
+    <textarea id="keyboard" placeholder="Enter Text..."style="display: none;" ></textarea>
+   -->
+  </div>
+  <div data-role="footer" style="text-align:center;">
+<!--
+    <textarea id="keyboard" placeholder="Enter Text..." style="display: none; visibility: hidden;" ></textarea>
+-->
+
+<a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-eye ui-btn-icon-left" onclick="toggleFullScreen();">FULLSCREEN</a>
+
+<a href="#" id="keybutton" class="ui-btn ui-corner-all ui-shadow ui-icon-edit ui-btn-icon-left">EDIT TEXT</a>
+
+    <a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-action ui-btn-icon-right" onclick="make();">SUBMIT JOB</a>
+
+  </div>
+</div> 
+
+
+<script type="application/processing" data-processing-target="2D">
+
+int verts = 100;
+int radius = 40;
+int sf2 = ($(window).innerHeight()-275)/document.getElementById("size").value;
+int sfx = 1;
+int x = 0;
+int y = 0;
+
+void setup(){
+   size($(window).innerWidth()-30,$(window).innerHeight()-180);
+   background(235);
+   noFill();
+   smooth();  
+   frameRate(2);
+   strokeCap(ROUND);
+   strokeWeight(1);
+   textFont(createFont("Arial",5));
+}
+
+void draw(){
+background(235);
+
+document.getElementById("2D").focus();
+
+//sf2 = ($(window).innerHeight()-275)/document.getElementById("size").value;
+
+translate(130,height-height*0.3);
+
+scale(sf2,sf2);
+
+if(xmax<140){
+   stroke(0,100,0,150);
+   fill(0,100,0,150);
+}
+else{
+   stroke(200,0,0,150);
+   fill(200,0,0,150);
+}
+strokeWeight(1/sf2);
+
+textSize(18/sf2);
+text(nf(((abs(ymin)+ymax)/25.4)/4,1,2) + "\" ", nf(xmin-23,1,0), nf(ymin/2,1,0));
+
+
+line(xmin-5,ymax,xmin-8,ymax);
+line(xmin-8,ymin,xmin-8,ymax);
+line(xmin-5,ymin,xmin-8,ymin);
+
+if(xmax<140){
+   stroke(200,0,0,150);
+   fill(180,0,0,150);
+}
+else{
+   stroke(0,100,0,150);
+   fill(0,100,0,150);
+}
+
+
+line(xmin,ymax+8,xmin,ymax+5);
+line(xmin,ymax+8,xmax,ymax+8);
+line(xmax,ymax+8,xmax,ymax+5);
+
+text(nf(((xmax-xmin)/25.4)/4,1,2) + "\" ", nf(xmax/2-4,1,0), nf(ymax+15,1,0));
+
+noFill();
+
+strokeWeight(1/sf2*2);
+
+
+
+for(i=0;i<dots.length;i++){
+
+
+   stroke(0);
+
+   strokeWeight(2/sf2);
+
+   beginShape();
+
+   for(j=0;j<dots[i].length;j++){
+         if(j==0){
+            stroke(255,0,0);
+//            ellipse(dots[i][j][0],dots[i][j][1],0.5,0.5);
+            vertex(dots[i][j][0],dots[i][j][1]);
+         }
+         else if(j==1){
+            stroke(0,0,255);
+//            ellipse(dots[i][j][0],dots[i][j][1],0.5,0.5);
+            vertex(dots[i][j][0],dots[i][j][1]);
+         }
+         else if(j!=dots[i].length-1){
+            stroke(0);
+//            ellipse(dots[i][j][0],dots[i][j][1],sf2*0.1,sf2*0.1);
+            vertex(dots[i][j][0],dots[i][j][1]);
+         }
+         else{
+           vertex(dots[i][j][0],dots[i][j][1]);
+         }         
+      
+   }
+
+endShape();
+
+}
+
+stroke(200,0,200);
+
+for(i=0;i<pocket.length;i++){
+
+if(i==0){
+stroke(100,0,0);
+}
+else if(i==1){
+stroke(0,100,0);
+}
+else if(i==2){
+stroke(0,0,100);
+}
+else if(i==3){
+stroke(100,0,100);
+}
+
+
+
+
+   for(j=0;j<pocket[i].length;j++){
+beginShape();
+
+      for(j2=0;j2<pocket[i][j].length;j2++){
+   
+         vertex(pocket[i][j][j2].X/100,pocket[i][j][j2].Y/100);
+      }
+
+endShape();
+
+      }
+
+}
+
+
+stroke(0,0,0);
+
+
+
+}
+
+
+
+void keyPressed() {
+
+
+txt = String.fromCharCode(key);
+
+delta = []
+tabs = []
+pocket = []
+pockets = []
+setTimeout(loadtxt(), 100)
+
+}
+
+
+void resizeSketch(){
+
+//   sf2 = ($(window).innerHeight()-275)/document.getElementById("size").value;
+//   size($(window).innerWidth()-30,$(window).innerHeight()-180);
+
+
+}
+
+$(window).resize(function() {	
+   resizeSketch()
+});
+
+
+</script>
+
+<script>
+
+var g = ""
+var gcode = []                      
+var paths = []
+var shapes = []
+var fontFileName
+var points = []
+var count = []
+var svg = []
+var test = []
+var test2 = []
+var len = []
+var points = []
+var txt = "?"
+var xy = []
+var xy_offset = []
+var oset = [[0,1]]
+var dots = []
+var tool_diameter
+var pocket = []
+var pockets = []
+var pocket_o = []
+
+var curve = ""
+var curve_length
+var offsetted_paths = []
+
+var x = []
+var y = []
+var xmin
+var xmax
+var ymin
+var ymax
+var material
+var delta = []
+var tabs = [0,0]
+var ptabs = [0,0]
+
+
+function reload(){
+
+//   var txt = document.getElementById("text").value;
+//alert(document.getElementById("font").value);   
+
+   points = []
+   count = []
+   shapes = []
+   test = []
+   test2 = []
+   points = []
+   path = ""
+   paths = []
+   xy = []
+   xy_offset = []
+   dots = []
+   svg = []
+   offsetted_paths = []
+   delta = []
+   tabs=[]
+   delta=[]   
+   loadfont()
+   loadtxt()
+   pocket = []
+   pockets = []
+   pocket_o = []
+
+}
+function loadfont() {
+   fontFileName = 'fonts/' + document.getElementById("font").value
+//   txt = txt;
+}
+
+function loadtxt() {
+
+   opentype.load(fontFileName, function(err, font) 
+   {
+
+   if (err) {
+   alert('Font could not be loaded: ' + err)
+   } 
+      else {
+      onFontLoaded(font)
+      }
+});
+
+}
+
+function onFontLoaded(font) {
+
+
+var path = font.getPath(txt, 0, 0, document.getElementById("size").value)
+
+
+for(i=0;i<path.commands.length;i++){
+   if(path.commands[i].type=="M"){
+   count.push(i)
+   }
+}
+
+for(i=0;i<count.length;i++){
+
+   if(i==0){
+      paths.push([path.commands.slice(0,count[i+1])])
+   }
+   else if(i==count.length-1){
+      paths.push([path.commands.slice(count[i])])
+   }
+   else{
+      paths.push([path.commands.slice(count[i],count[i+1])])
+   }
+
+}
+
+for(i=0;i<paths.length;i++){
+   shapes.push(paths[i])
+}
+
+for(i=0;i<shapes.length;i++){
+test.push({commands: shapes[i][0], fill: "black", stroke: null, strokeWidth: 1})
+}
+
+test2 = []
+dots = []
+var lines
+
+
+for(i=0;i<test.length;i++){
+
+dots.push([]);
+
+    for(i2=0;i2<test[i].commands.length;i2++){
+  
+      test2 += test[i].commands[i2].type + " "
+   
+       if((test[i].commands[i2].type=="L") || (test[i].commands[i2].type=="M")){
+          test2 += test[i].commands[i2].x + " "
+          test2 += test[i].commands[i2].y + " "
+          dots[i].push([test[i].commands[i2].x,test[i].commands[i2].y])
+                
+       }  
+
+      if(test[i].commands[i2].type=="Q"){
+         test2 += test[i].commands[i2].x1 + " "
+         test2 += test[i].commands[i2].y1 + " "
+         test2 += test[i].commands[i2].x + " "
+         test2 += test[i].commands[i2].y + " "
+         
+         curve += "M ";
+         curve += test[i].commands[i2-1].x + " "
+         curve += test[i].commands[i2-1].y + " "
+
+         curve += test[i].commands[i2].type + " "
+         curve += test[i].commands[i2].x1 + " "
+         curve += test[i].commands[i2].y1 + " "
+         curve += test[i].commands[i2].x + " "
+         curve += test[i].commands[i2].y + " "
+
+
+         curve_length = parseFloat(Snap.path.getTotalLength(curve).toFixed(0))
+
+
+if(curve_length>1){
+         
+         for(j=1;j<curve_length;j=j+1){
+            dots[i].push([Snap.path.getPointAtLength(curve, j).x,Snap.path.getPointAtLength(curve, j).y])
+
+         }
+
+}
+
+            dots[i].push([test[i].commands[i2].x,test[i].commands[i2].y])
+
+         curve = ""
+         curve_length = 0                 
+      } 
+   }
+svg.push(test2)
+
+test2 = ""
+}
+
+var area = []
+var sum = 0
+var minx = []
+var miny = []
+var low = []
+
+xy = []
+x = []
+y = []
+
+
+for(i=0;i<dots.length;i++){
+
+points.push([]);
+
+   for(j=0;j<dots[i].length;j++){
+
+      points[i].push({X:dots[i][j][0],Y:dots[i][j][1]})
+      x.push(dots[i][j][0])
+      y.push(dots[i][j][1])
+
+   }
+
+}
+
+//console.log(dots);
+
+if(dots.length<1){
+
+   xmin = 0
+   xmax = 0
+   ymin = 0
+   ymax = 0
+}
+else{
+   xmin = (Math.min.apply(Math, x))
+   xmax = (Math.max.apply(Math, x))
+   ymin = (Math.min.apply(Math, y))
+   ymax = (Math.max.apply(Math, y))
+}
+
+
+tool_diameter=document.getElementById("tool").value
+
+var scale = 100
+
+ClipperLib.JS.ScaleUpPaths(points, scale)
+var simple_paths = ClipperLib.Clipper.SimplifyPolygons(points, ClipperLib.PolyFillType.pftNonZero)
+var co = new ClipperLib.ClipperOffset((tool_diameter/2*25.4), 0.25)
+co.AddPaths(simple_paths, ClipperLib.JoinType.jtMiter, ClipperLib.EndType.etClosedPolygon)
+
+
+i=1
+
+while(i>0){
+   
+   offsetted_paths = new ClipperLib.Paths()
+   co.Execute(offsetted_paths,-((tool_diameter/2*25.4)*i) * scale)
+   pocket.push(offsetted_paths)
+
+   i++
+
+   if(pocket[i-2].length==0){
+   i=0;
+   pocket.splice(pocket.length-1,1)
+//   pockets.splice(pockets.length-1,1)
+   }
+
+}
+
+offsetted_paths = new ClipperLib.Paths()
+co.Execute(offsetted_paths, (tool_diameter/2*25.4) * scale)
+
+
+pocket_o = [];
+
+for(i=0;i<pocket.length;i++){
+
+   for(j=0;j<pocket[i].length;j++){
+      pocket[i][j].push(pocket[i][j][0])
+
+   }
+
+}
+
+
+pocket_o = pocket[0]
+pocket.splice(0,1)
+
+var pt
+var inpg
+
+for(i=0;i<pocket_o.length;i++){
+
+pt = new ClipperLib.IntPoint(pocket_o[i][0].X,pocket_o[i][0].Y)
+
+
+//create outer pocket profile
+
+for(j=0;j<pocket_o.length;j++){
+
+   //0 = false
+   //-1 = on
+   //1 = in
+   inpg = ClipperLib.Clipper.PointInPolygon(pt, pocket_o[j])
+
+   if(inpg==1){
+   //console.log("pg: " + i + " is in pg: " + j);
+      pocket[0].push(pocket_o[i])
+      pocket_o.splice(i,1)
+      i = i-1
+   }
+
+}
+}
+
+
+for(i=0;i<pocket_o.length;i++){
+
+pockets.push([])
+
+for(j=0;j<pocket.length;j++){
+
+   for(j2=0;j2<pocket[j].length;j2++){
+
+   pt = new ClipperLib.IntPoint(pocket[j][j2][0].X,pocket[j][j2][0].Y)
+   inpg = ClipperLib.Clipper.PointInPolygon(pt, pocket_o[i])
+
+   if(inpg==1){
+      pockets[i].push(pocket[j][j2])
+   }
+   }
+}
+}
+
+pocket = []
+
+for(i=0;i<pockets.length;i++){
+
+   pocket.push([])
+
+   j=0;
+
+      while(j<pockets[i].length){
+
+         pt = new ClipperLib.IntPoint(pockets[i][j][0].X,pockets[i][j][0].Y)
+         inpg = 0;      
+         for(j2=0;j2<pockets[i].length;j2++){
+           inpg += ClipperLib.Clipper.PointInPolygon(pt, pockets[i][j2])                 
+         }
+
+         if(inpg==-1){
+
+            pocket[i].push(pockets[i][j])
+            pockets[i].splice(j,1)
+            j--
+      }
+   j++;
+   }
+}
+
+var check = 1
+
+while(check>0){
+
+
+for(i=0;i<pockets.length;i++){
+
+   if(pockets[i].length>0){
+
+   j=0;
+   while(j<pockets[i].length){
+
+      pt = new ClipperLib.IntPoint(pockets[i][j][0].X,pockets[i][j][0].Y)
+      inpg = 0;
+
+      for(j2=0;j2<pockets[i].length;j2++){
+         inpg += ClipperLib.Clipper.PointInPolygon(pt, pockets[i][j2])                  
+      }
+
+      if(inpg==-1){
+
+         pocket[i].splice(-1,0,pockets[i][j])
+         pockets[i].splice(j,1)
+         j--
+
+        
+      }
+   j++
+   }
+   }
+
+}
+
+//check
+
+check = 0;
+
+for(i=0;i<pockets.length;i++){
+   if(pockets[i].length>0){
+      check = 1
+   }
+
+
+}
+
+}
+
+//console.log(pockets)
+//console.log(check)
+//console.log(pocket_o)
+console.log(pocket);
+
+for(i=0;i<pocket.length;i++){
+   pocket[i].splice(0,0,pocket_o[i]);
+}
+
+for(i=0;i<pocket.length;i++){
+   pocket[i].reverse()
+}
+
+var l2r = [];
+//order array from left to right
+//console.log(pocket)
+
+for(i=0;i<pocket.length;i++){
+   //console.log(pocket[i][0][0].X + " " + i);
+   l2r.push({index:i, x:pocket[i][0][0].X});
+}
+
+console.log(l2r);
+
+l2r.sort(function(a, b) {
+    return parseFloat(a.x) - parseFloat(b.x);
+});
+
+pockets=[];
+console.log(l2r)
+for(i=0;i<l2r.length;i++){
+
+pockets.push(pocket[l2r[i].index]);
+
+}
+
+//console.log(pockets)
+pocket = pockets
+
+xy_offset = []
+points = []
+count = []
+shapes = []
+test = []
+test2 = []
+path = " "
+paths = []
+shape = []
+len = []
+svg = []
+
+//console.log(document.getElementById("thickness").value);
+
+material = eval('({' + (document.getElementById("material").value) + '})');
+
+//console.log(material.feed);
+//console.log(material.plunge);
+
+}
+
+
+function make(){
+
+g="";
+
+//header
+g+="g21\n"
+g+="g0z5\n"
+g+="m4\n"
+g+="g4p2\n"
+g+="g0z5\n"
+
+for(i=0;i<pocket.length;i++){
+   for(j=0;j<pocket[i].length;j++){
+      for(j2=0;j2<pocket[i][j].length;j2++){
+            if(j2==0){
+               g+= "g0x" + ((pocket[i][j][j2].X/100)/4) + "y" + (ymax/4-(pocket[i][j][j2].Y/100)/4).toFixed(2) + "\n"
+               g+="g1z-0.25f200\n"
+            }
+            else{              
+               g+= "g1x" + ((pocket[i][j][j2].X/100)/4) + "y" + (ymax/4-(pocket[i][j][j2].Y/100)/4).toFixed(2) + "f300\n"
+            }
+       }
+       g+="g0z1\n"   
+   }
+   g+="g0z2\n" 
+}
+
+g+="g0z5\n"
+g+="m5\n"
+g+="m30\n"
+
+console.log(g)
+
+fabmoDashboard.submitJob(g, {filename : txt+'.g', name : "TEXT: " + txt, description : "FONT: " + document.getElementById("font").value})
+
+g=""
+
+}
+
+
+
+$( "#keybutton" ).click(function() {
+
+
+   delta = []
+   tabs = []
+   pocket = []
+   pockets = []
+   pocket_o = []
+
+   txt = window.prompt("?");
+
+   if(txt!=null){
+      loadtxt()
+   }
+   else{
+      txt = "?"
+      loadtxt()
+}
+   
+
+});
+
+
+// toggle full screen
+function toggleFullScreen() {
+  if (!document.fullscreenElement &&    // alternative standard method
+      !document.mozFullScreenElement && !document.webkitFullscreenElement) {  // current working methods
+    if (document.documentElement.requestFullscreen) {
+      document.documentElement.requestFullscreen();
+    } else if (document.documentElement.mozRequestFullScreen) {
+      document.documentElement.mozRequestFullScreen();
+    } else if (document.documentElement.webkitRequestFullscreen) {
+      document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+    }
+  } else {
+    if (document.cancelFullScreen) {
+      document.cancelFullScreen();
+    } else if (document.mozCancelFullScreen) {
+      document.mozCancelFullScreen();
+    } else if (document.webkitCancelFullScreen) {
+      document.webkitCancelFullScreen();
+    }
+  }
+}
+
+</script>
+
+
+</body>
+</html>
+
