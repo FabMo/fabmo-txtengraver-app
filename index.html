@@ -4,7 +4,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" charset="utf-8"/>
 <link rel="stylesheet" href="css/jquery.mobile-1.4.5.css">
 
-
 <script src="js/libs/dashboard.js"></script>
 <script src="js/jquery-1.11.2.min.js"></script>
 <script src="js/control.js"></script>
@@ -15,44 +14,60 @@
 <script src="js/snap.svg-min.js"></script>
 <script src="js/clipper.js"></script>
 
-
 </head>
-<style>
-
-#run{
-position: absolute;
-left: 0;
-top:0;
-}
-
-#3D{
-
-position: absolute;
-top:0;
-left:0;
-}
-
-</style>
 
 <body onload="reload();">
+
 <div data-role="page" id="pagezero">
+  <div data-role="header">
+    <h1>PRESS A KEY</h1>
+    <div data-role="navbar">
+      <ul>
+        <li><a href="#pageone">SETUP</a></li>
+        <li><a href="#pagezero" onclick="reload();" class="ui-btn-active ui-state-persist">TXT ENGRAVER</a></li>
+<!--        <li><a href="#pagetwo">PREVIEW</a></li> -->
+      </ul>
+    </div>
+  </div>
+  <div data-role="main" class="ui-content">
+    <canvas id="2D"> </canvas>
+   <!--
+    <textarea id="keyboard" placeholder="Enter Text..."style="display: none;" ></textarea>
+   -->
+  </div>
+  <div data-role="footer" style="text-align:center;">
+<!--
+    <textarea id="keyboard" placeholder="Enter Text..." style="display: none; visibility: hidden;" ></textarea>
+-->
+
+<a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-eye ui-btn-icon-left" onclick="toggleFullScreen();">FULLSCREEN</a>
+
+<a href="#" id="keybutton" class="ui-btn ui-corner-all ui-shadow ui-icon-edit ui-btn-icon-left">EDIT TEXT</a>
+
+    <a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-action ui-btn-icon-right" onclick="make();">SUBMIT JOB</a>
+
+  </div>
+</div> 
+
+
+
+<div data-role="page" id="pageone">
   <div data-role="header">
     <h1>SELECT A FONT</h1>
     <div data-role="navbar">
       <ul>
-        <li><a href="#pagezero" class="ui-btn-active ui-state-persist">SETUP</a></li>
-        <li><a href="#pageone" onclick="reload();">TXT MAKER</a></li>
+        <li><a href="#pageone" class="ui-btn-active ui-state-persist">SETUP</a></li>
+        <li><a href="#pagezero" onclick="reload();">TXT ENGRAVER</a></li>
 <!--        <li><a href="#pagetwo">PREVIEW</a></li> -->
       </ul>
     </div>
   </div>
   <div data-role="main" class="ui-content">
 <!--
-<textarea id="keyboard" placeholder="Enter Text..."></textarea>
-
       <label for="text">TEXT:</label>
       <input type="text" name="text" id="text" value="Hello!">
 -->
+
     <form method="post">
       <fieldset class="ui-field-contain">
         <label for="font">FONT</label>
@@ -77,12 +92,12 @@ left:0;
 
          <label for="size">FONT SIZE</label>
          <select name="size" id="size">
-<!--
-          <option value="12.6">1/2"</option>
-          <option value="25.4">1"</option>
-          <option value="50.8">2"</option>
--->
-          <option value="76.2" selected>0.75"</option>
+
+          <option value="12">1/2"</option>
+          <option value="6">1"</option>
+          <option value="3" selected>2"</option>
+          <option value="2">3"</option>
+
 <!--
           <option value="101.6">4"</option>
           <option value="127">5"</option>
@@ -123,62 +138,32 @@ left:0;
       <fieldset class="ui-field-contain">
         <label for="day">CUTTING TOOL</label>
         <select name="tool" id="tool">
-<!--
+
+          <option value="0.0156">1/64" ENDMILL</option>
           <option value="0.0313">1/32" ENDMILL</option>
           <option value="0.0625">1/16" ENDMILL</option>
--->
-          <option value="0.12" selected>1/32" ENDMILL</option>
-<!--
+          <option value="0.125" selected>1/8" ENDMILL</option>
           <option value="0.25">1/4" ENDMILL</option>
--->
+
         </select>
       </fieldset>
     </form>
 </div>
   <div data-role="footer" style="text-align:center;">
-    <a href="#pagezero" class="ui-btn ui-corner-all ui-shadow ui-icon-eye ui-btn-icon-left" onclick="toggleFullScreen();">FULLSCREEN</a>
+    <a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-eye ui-btn-icon-left" onclick="toggleFullScreen();">FULLSCREEN</a>
 
-    <a href="#pageone" onclick="reload();" class="ui-btn ui-corner-all ui-shadow ui-icon-carat-r ui-btn-icon-right">TEXT</a>
+    <a href="#pagezero" onclick="reload();" class="ui-btn ui-corner-all ui-shadow ui-icon-carat-r ui-btn-icon-right">TEXT</a>
   </div>
 </div> 
 
-<div data-role="page" id="pageone">
-  <div data-role="header">
-    <h1>PRESS A KEY</h1>
-    <div data-role="navbar">
-      <ul>
-        <li><a href="#pagezero">SETUP</a></li>
-        <li><a href="#pageone" onclick="reload();" class="ui-btn-active ui-state-persist">TXT MAKER</a></li>
-<!--        <li><a href="#pagetwo">PREVIEW</a></li> -->
-      </ul>
-    </div>
-  </div>
-  <div data-role="main" class="ui-content">
-    <canvas id="2D" tabindex="1"> </canvas>
-   <!--
-    <textarea id="keyboard" placeholder="Enter Text..."style="display: none;" ></textarea>
-   -->
-  </div>
-  <div data-role="footer" style="text-align:center;">
-<!--
-    <textarea id="keyboard" placeholder="Enter Text..." style="display: none; visibility: hidden;" ></textarea>
--->
 
-<a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-eye ui-btn-icon-left" onclick="toggleFullScreen();">FULLSCREEN</a>
-
-<a href="#" id="keybutton" class="ui-btn ui-corner-all ui-shadow ui-icon-edit ui-btn-icon-left">EDIT TEXT</a>
-
-    <a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-action ui-btn-icon-right" onclick="make();">SUBMIT JOB</a>
-
-  </div>
-</div> 
 
 
 <script type="application/processing" data-processing-target="2D">
 
 int verts = 100;
 int radius = 40;
-int sf2 = ($(window).innerHeight()-275)/document.getElementById("size").value;
+int sf2 = ($(window).innerHeight()-275)/120;
 int sfx = 1;
 int x = 0;
 int y = 0;
@@ -188,10 +173,10 @@ void setup(){
    background(235);
    noFill();
    smooth();  
-   frameRate(2);
+   frameRate(1);
    strokeCap(ROUND);
    strokeWeight(1);
-   textFont(createFont("Arial",5));
+   textFont(createFont("Arial",8));
 }
 
 void draw(){
@@ -199,12 +184,13 @@ background(235);
 
 document.getElementById("2D").focus();
 
-//sf2 = ($(window).innerHeight()-275)/document.getElementById("size").value;
-
+sf2 = ($(window).innerHeight()-275)/120;
+size($(window).innerWidth()-30,$(window).innerHeight()-180);
 translate(130,height-height*0.3);
 
 scale(sf2,sf2);
 
+/*
 if(xmax<140){
    stroke(0,100,0,150);
    fill(0,100,0,150);
@@ -213,16 +199,20 @@ else{
    stroke(200,0,0,150);
    fill(200,0,0,150);
 }
+*/
+stroke(0,100,0,150);
+fill(0,100,0,150);
+
 strokeWeight(1/sf2);
 
-textSize(18/sf2);
-text(nf(((abs(ymin)+ymax)/25.4)/4,1,2) + "\" ", nf(xmin-23,1,0), nf(ymin/2,1,0));
+//textSize(18/sf2);
+text(nf(((abs(ymin)+ymax)/document.getElementById("size").value/25.4),1,2) + "\" ", nf(xmin-27,1,0), nf(ymin/2,1,0));
 
 
 line(xmin-5,ymax,xmin-8,ymax);
 line(xmin-8,ymin,xmin-8,ymax);
 line(xmin-5,ymin,xmin-8,ymin);
-
+/*
 if(xmax<140){
    stroke(200,0,0,150);
    fill(180,0,0,150);
@@ -231,13 +221,15 @@ else{
    stroke(0,100,0,150);
    fill(0,100,0,150);
 }
-
+*/
+stroke(200,0,0,150);
+fill(180,0,0,150);
 
 line(xmin,ymax+8,xmin,ymax+5);
 line(xmin,ymax+8,xmax,ymax+8);
 line(xmax,ymax+8,xmax,ymax+5);
 
-text(nf(((xmax-xmin)/25.4)/4,1,2) + "\" ", nf(xmax/2-4,1,0), nf(ymax+15,1,0));
+text(nf(((xmax-xmin)/document.getElementById("size").value/25.4),1,2) + "\" ", nf(xmax/2-5,1,0), nf(ymax+16,1,0));
 
 noFill();
 
@@ -280,10 +272,11 @@ endShape();
 
 }
 
-stroke(200,0,200);
+stroke(100,0,100,180);
 
 for(i=0;i<pocket.length;i++){
 
+/*
 if(i==0){
 stroke(100,0,0);
 }
@@ -296,7 +289,7 @@ stroke(0,0,100);
 else if(i==3){
 stroke(100,0,100);
 }
-
+*/
 
 
 
@@ -305,7 +298,7 @@ beginShape();
 
       for(j2=0;j2<pocket[i][j].length;j2++){
    
-         vertex(pocket[i][j][j2].X/100,pocket[i][j][j2].Y/100);
+         vertex(nf(pocket[i][j][j2].X/100,0,1),nf(pocket[i][j][j2].Y/100,0,1));
       }
 
 endShape();
@@ -337,17 +330,7 @@ setTimeout(loadtxt(), 100)
 }
 
 
-void resizeSketch(){
 
-//   sf2 = ($(window).innerHeight()-275)/document.getElementById("size").value;
-//   size($(window).innerWidth()-30,$(window).innerHeight()-180);
-
-
-}
-
-$(window).resize(function() {	
-   resizeSketch()
-});
 
 
 </script>
@@ -394,9 +377,6 @@ var ptabs = [0,0]
 
 function reload(){
 
-//   var txt = document.getElementById("text").value;
-//alert(document.getElementById("font").value);   
-
    points = []
    count = []
    shapes = []
@@ -422,7 +402,6 @@ function reload(){
 }
 function loadfont() {
    fontFileName = 'fonts/' + document.getElementById("font").value
-//   txt = txt;
 }
 
 function loadtxt() {
@@ -443,8 +422,8 @@ function loadtxt() {
 function onFontLoaded(font) {
 
 
-var path = font.getPath(txt, 0, 0, document.getElementById("size").value)
-
+//var path = font.getPath(txt, 0, 0, document.getElementById("size").value)
+var path = font.getPath(txt, 0, 0, 152.4)
 
 for(i=0;i<path.commands.length;i++){
    if(path.commands[i].type=="M"){
@@ -576,36 +555,54 @@ else{
 }
 
 
-tool_diameter=document.getElementById("tool").value
+tool_diameter= (document.getElementById("tool").value * document.getElementById("size").value)
+
+//console.log(document.getElementById("size").value);
+console.log(tool_diameter);
 
 var scale = 100
 
 ClipperLib.JS.ScaleUpPaths(points, scale)
+
 var simple_paths = ClipperLib.Clipper.SimplifyPolygons(points, ClipperLib.PolyFillType.pftNonZero)
 var co = new ClipperLib.ClipperOffset((tool_diameter/2*25.4), 0.25)
 co.AddPaths(simple_paths, ClipperLib.JoinType.jtMiter, ClipperLib.EndType.etClosedPolygon)
 
 
 i=1
+j2 = 1
 
 while(i>0){
    
    offsetted_paths = new ClipperLib.Paths()
-   co.Execute(offsetted_paths,-((tool_diameter/2*25.4)*i) * scale)
-   pocket.push(offsetted_paths)
+//   co.Execute(offsetted_paths,-((tool_diameter/2*25.4)*i) * scale)
+//   document.getElementById("size").value
 
+if(i==1){
+   co.Execute(offsetted_paths,-(tool_diameter/2*25.4) * scale)
+   console.log(i)
+}
+else{
+
+   co.Execute(offsetted_paths,-((tool_diameter/2*25.4)*j2) * scale)
+//   co.Execute(offsetted_paths,-(((tool_diameter/2*25.4)*2)+((tool_diameter/2*25.4)*i*0.8) * scale))
+   console.log(j2)
+}
+
+   j2+=0.7
+
+   pocket.push(offsetted_paths)
+//   console.log(i);
    i++
+   
 
    if(pocket[i-2].length==0){
    i=0;
-   pocket.splice(pocket.length-1,1)
-//   pockets.splice(pockets.length-1,1)
+   pocket.splice(pocket.length,0)
+
    }
 
 }
-
-offsetted_paths = new ClipperLib.Paths()
-co.Execute(offsetted_paths, (tool_diameter/2*25.4) * scale)
 
 
 pocket_o = [];
@@ -670,6 +667,8 @@ for(j=0;j<pocket.length;j++){
 }
 
 pocket = []
+
+
 
 for(i=0;i<pockets.length;i++){
 
@@ -818,11 +817,11 @@ for(i=0;i<pocket.length;i++){
    for(j=0;j<pocket[i].length;j++){
       for(j2=0;j2<pocket[i][j].length;j2++){
             if(j2==0){
-               g+= "g0x" + ((pocket[i][j][j2].X/100)/4) + "y" + (ymax/4-(pocket[i][j][j2].Y/100)/4).toFixed(2) + "\n"
-               g+="g1z-0.25f200\n"
+               g+= "g0x" + ((pocket[i][j][j2].X/100)/document.getElementById("size").value) + "y" + ((ymax-(pocket[i][j][j2].Y/100)/document.getElementById("size").value).toFixed(2)) + "\n"
+               g+="g1z-0.25f2000\n"
             }
             else{              
-               g+= "g1x" + ((pocket[i][j][j2].X/100)/4) + "y" + (ymax/4-(pocket[i][j][j2].Y/100)/4).toFixed(2) + "f300\n"
+               g+= "g1x" + ((pocket[i][j][j2].X/100)/document.getElementById("size").value) + "y" + (((ymax/document.getElementById("size").value)-(pocket[i][j][j2].Y/100)/document.getElementById("size").value).toFixed(2)) + "f2000\n"
             }
        }
        g+="g0z1\n"   
