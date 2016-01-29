@@ -73,6 +73,7 @@
         <label for="font">FONT</label>
         <select name="font" id="font">
           <option value="ChicagoFLF.ttf">Chicago</option>
+          <option value="galaxyfaraway.ttf">Galaxy</option> 
           <option value="junegull.ttf" selected>Junegull</option>          
           <option value="newmars.ttf">New Mars</option>
           <option value="Roboto-Black.ttf">Roboto</option>
@@ -163,10 +164,11 @@
 
 int verts = 100;
 int radius = 40;
-int sf2 = ($(window).innerHeight()-275)/120;
+int sf2 = abs($(window).innerHeight()-275)/(ymax-ymin);
 int sfx = 1;
 int x = 0;
 int y = 0;
+int sf;
 
 void setup(){
    size($(window).innerWidth()-30,$(window).innerHeight()-180);
@@ -184,11 +186,28 @@ background(235);
 
 document.getElementById("2D").focus();
 
-sf2 = ($(window).innerHeight()-275)/120;
-size($(window).innerWidth()-30,$(window).innerHeight()-180);
-translate(130,height-height*0.3);
+//console.log(ymax-ymin);
 
-scale(sf2,sf2);
+size($(window).innerWidth()-30,$(window).innerHeight()-180);
+
+
+
+//if((100+xmax)>width/sf2){
+//   sf = abs($(window).innerWidth())/(xmax);
+//   scale(sf,sf);
+//}
+//else{
+   sf2 = abs($(window).innerHeight()-180)/(abs(ymax-ymin)+25);
+//   translate(60,((ymax-ymin)*sf2)+20);   
+   scale(sf2,sf2);
+   translate((-(xmin)+30),abs(ymin)+5);
+//}
+//   console.log(ymin);
+
+
+
+
+
 
 /*
 if(xmax<140){
