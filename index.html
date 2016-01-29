@@ -837,10 +837,10 @@ for(i=0;i<pocket.length;i++){
       for(j2=0;j2<pocket[i][j].length;j2++){
             if(j2==0){
                g+= "g0x" + ((pocket[i][j][j2].X/100)/document.getElementById("size").value) + "y" + ((ymax-(pocket[i][j][j2].Y/100)/document.getElementById("size").value).toFixed(2)) + "\n"
-               g+="g1z-0.25f2000\n"
+               g+="g1z-0.25f200\n"
             }
             else{              
-               g+= "g1x" + ((pocket[i][j][j2].X/100)/document.getElementById("size").value) + "y" + (((ymax/document.getElementById("size").value)-(pocket[i][j][j2].Y/100)/document.getElementById("size").value).toFixed(2)) + "f2000\n"
+               g+= "g1x" + ((pocket[i][j][j2].X/100)/document.getElementById("size").value) + "y" + (((ymax/document.getElementById("size").value)-(pocket[i][j][j2].Y/100)/document.getElementById("size").value).toFixed(2)) + "f400\n"
             }
        }
        g+="g0z1\n"   
