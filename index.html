@@ -789,7 +789,11 @@ material = eval('({' + (document.getElementById("material").value) + '})');
 function make(){
 
 var pass = 1
-var pass_no = Math.round(document.getElementById("thickness").value/(document.getElementById("tool").value*25.4))
+var pass_no = (document.getElementById("thickness").value/(document.getElementById("tool").value*25.4)).toFixed(0)
+if(pass_no==0){
+   pass_no=1
+}
+
 var pass_depth = document.getElementById("thickness").value/pass_no
 
 
