@@ -83,10 +83,10 @@
       <fieldset class="ui-field-contain">
         <label for="material">ENGRAVE DEPTH</label>
         <select name="thickness" id="thickness">
-          <option value="0.25" selected>0.01"</option>
+          <option value="0.25">0.01"</option>
           <option value="1.27" selected>0.05"</option>
-          <option value="2.54" selected>0.1"</option>
-          <option value="6.35" selected>0.25"</option>
+          <option value="2.54">0.1"</option>
+          <option value="6.35">0.25"</option>
         </select>
       </fieldset>
     </form>
@@ -95,7 +95,7 @@
       <fieldset class="ui-field-contain">
         <label for="material">MATERIAL TYPE</label>
         <select name="material" id="material">
-          <option value="feed:1000,plunge:200" selected>PLYWOOD</option>
+          <option value="feed:400,plunge:200" selected>PLYWOOD</option>
         </select>
       </fieldset>
     </form>
@@ -810,10 +810,10 @@ for(i=0;i<pocket.length;i++){
       for(j2=0;j2<pocket[i][j].length;j2++){
             if(j2==0){
                g+= "g0x" + ((pocket[i][j][j2].X/100)/document.getElementById("size").value).toFixed(2) + "y" + ((ymax-(pocket[i][j][j2].Y/100)/document.getElementById("size").value).toFixed(2)) + "\n"
-               g+="g1z-" + (pass_depth*pass) + "f200\n"
+               g+="g1z-" + (pass_depth*pass) + "f" + material.plunge + "\n"
             }
             else{              
-               g+= "g1x" + ((pocket[i][j][j2].X/100)/document.getElementById("size").value).toFixed(2) + "y" + (((ymax/document.getElementById("size").value)-(pocket[i][j][j2].Y/100)/document.getElementById("size").value).toFixed(2)) + "f500\n"
+               g+= "g1x" + ((pocket[i][j][j2].X/100)/document.getElementById("size").value).toFixed(2) + "y" + (((ymax/document.getElementById("size").value)-(pocket[i][j][j2].Y/100)/document.getElementById("size").value).toFixed(2)) + "f" + material.feed + "\n"
             }
        }
        g+="g0z1\n"     
@@ -828,11 +828,11 @@ g+="g0z5\n"
 g+="m5\n"
 g+="m30\n"
 
-//console.log(g)
+console.log(g)
 //console.log(pass_no)
 //console.log(pass_depth)
 
-fabmoDashboard.submitJob(g, {filename : txt+'.g', name : "TEXT: " + txt, description : "FONT: " + document.getElementById("font").value})
+//fabmoDashboard.submitJob(g, {filename : txt+'.g', name : "TEXT: " + txt, description : "FONT: " + document.getElementById("font").value})
 
 g=""
 
