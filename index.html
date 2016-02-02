@@ -14,6 +14,29 @@
 <script src="js/snap.svg-min.js"></script>
 <script src="js/clipper.js"></script>
 
+<style>
+
+#loadfont {
+  position: relative;
+  overflow: hidden;
+  float: center;
+  margin-right: 4px;
+}
+#loadfont input {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 0;
+  opacity: 0;
+  filter: alpha(opacity=0);
+  transform: translate(-300px, 0) scale(4);
+  font-size: 23px;
+  direction: ltr;
+  cursor: pointer;
+}
+
+</style>
+
 </head>
 
 <body onload="reload();">
@@ -33,6 +56,10 @@
     <canvas id="2D"> </canvas>
   </div>
   <div data-role="footer" style="text-align:center;">
+    <span class="ui-btn ui-corner-all ui-shadow ui-icon-plus ui-btn-icon-left" id="loadfont" onclick="getFont();">
+       <span>LOAD FONT</span>
+       <input type="file" name="files[]" multiple data-role="none"/>
+    </span>
     <a href="#" id="keybutton" class="ui-btn ui-corner-all ui-shadow ui-icon-edit ui-btn-icon-left">EDIT TEXT</a>
     <a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-action ui-btn-icon-right" onclick="make();">SUBMIT JOB</a>
   </div>
@@ -117,11 +144,12 @@
 </div>
   <div data-role="footer" style="text-align:center;">
 
+
+
+
     <a href="#pagezero" onclick="reload();" class="ui-btn ui-corner-all ui-shadow ui-icon-carat-r ui-btn-icon-right">MAKE TEXT</a>
   </div>
 </div> 
-
-
 
 
 <script type="application/processing" data-processing-target="2D">
@@ -159,12 +187,13 @@ if((xmax*sf2)>($(window).innerWidth())){
    sf = abs($(window).innerWidth())/(abs(xmax-xmin)+80);
    scale(sf,sf);
    textSize(12/sf);
+   strokeWeight(1/sf);
 
 }
 else{
    sf2 = abs($(window).innerHeight()-180)/(abs(ymax-ymin)+25);
    scale(sf2,sf2);
-
+   strokeWeight(1/sf2);
 }
 
 
@@ -186,7 +215,6 @@ else{
 stroke(0,100,0,150);
 fill(0,100,0,150);
 
-strokeWeight(1/sf2);
 
 //textSize(sf2*2);
 text(nf(((abs(ymin)+ymax)/document.getElementById("size").value/25.4),1,2) + "\" ", nf(xmin-27,1,0), nf(((ymin+ymax)/2),1,0));
@@ -225,7 +253,7 @@ for(i=0;i<dots.length;i++){
 
    stroke(0);
 
-   strokeWeight(2/sf2);
+
 
    beginShape();
 
@@ -357,7 +385,8 @@ var material
 var delta = []
 var tabs = [0,0]
 var ptabs = [0,0]
-
+var exfont = false
+var font
 
 function reload(){
 
@@ -376,19 +405,52 @@ function reload(){
    offsetted_paths = []
    delta = []
    tabs=[]
-   delta=[]   
-   loadfont()
-   loadtxt()
    pocket = []
    pockets = []
    pocket_o = []
 
+   if(exfont==false){   
+      loadfont()
+      loadtxt()
+   }
+   else{
+      loadtxt()
+   }
+
+
 }
+
+
+$( "#keybutton" ).click(function() {
+
+
+   pocket = []
+   pockets = []
+   pocket_o = []
+
+   txt = window.prompt("ENTER TEXT TO ENGRAVE")
+   alert("this may take a few seconds...")
+
+   if(txt!=null){
+      reload()
+   }
+   else{
+      txt = "?"
+      reload()
+}
+   
+
+});
+
+
 function loadfont() {
    fontFileName = 'fonts/' + document.getElementById("font").value
 }
 
 function loadtxt() {
+
+   if(exfont==false){
+//      onFontLoaded(font)      
 
    opentype.load(fontFileName, function(err, font) 
    {
@@ -399,7 +461,12 @@ function loadtxt() {
       else {
       onFontLoaded(font)
       }
-});
+   });
+
+   }
+   else{
+   onFontLoaded(font) 
+   }
 
 }
 
@@ -843,30 +910,44 @@ g=""
 }
 
 
+function getFont(){
 
-$( "#keybutton" ).click(function() {
+alert("Select a TTF File")
 
+}
 
-   delta = []
-   tabs = []
+function onReadFile(evt) {
+
+   exfont = true
    pocket = []
    pockets = []
-   pocket_o = []
 
-   txt = window.prompt("ENTER TEXT TO ENGRAVE")
-   alert("this may take a few seconds...")
-
-   if(txt!=null){
-      loadtxt()
-   }
-   else{
-      txt = "?"
-      loadtxt()
-}
    
+    var f = evt.target.files[0]; 
 
+    if (f) {
+
+      var r = new FileReader();
+      r.onload = function(e) { 
+	     var contents = e.target.result;
+        
+        font = opentype.parse(e.target.result);
+        onFontLoaded(font);
+        
+      }
+        r.readAsArrayBuffer(f);
+
+    } else { 
+      alert("Failed to load file");
+    }
+
+}
+
+document.getElementById('font').addEventListener('click', function(){
+    exfont = false
 });
 
+document.getElementById('loadfont').addEventListener('change', onReadFile, false);
 
 // toggle full screen
 function toggleFullScreen() {
