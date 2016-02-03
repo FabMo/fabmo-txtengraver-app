@@ -56,6 +56,9 @@
     <canvas id="2D"> </canvas>
   </div>
   <div data-role="footer" style="text-align:center;">
+   cutout:
+   <a href="#" id="radius" class="ui-btn ui-corner-all ui-shadow ui-icon-clock ui-btn-icon-left">RADIUS</a>
+   <input type="checkbox" data-role="flipswitch" name="cutout" id="cutout" checked/>
     <span class="ui-btn ui-corner-all ui-shadow ui-icon-plus ui-btn-icon-left" id="loadfont" onclick="getFont();">
        <span>LOAD FONT</span>
        <input type="file" name="files[]" multiple data-role="none"/>
@@ -162,6 +165,8 @@ int x = 0;
 int y = 0;
 int sf;
 
+
+
 void setup(){
    size($(window).innerWidth()-30,$(window).innerHeight()-180);
    background(235);
@@ -184,34 +189,35 @@ size($(window).innerWidth()-30,$(window).innerHeight()-180);
 
 
 if((xmax*sf2)>($(window).innerWidth())){
-   sf = abs($(window).innerWidth())/(abs(xmax-xmin)+80);
+   sf = abs($(window).innerWidth())/(abs(xmax-xmin)+120);
    scale(sf,sf);
    textSize(12/sf);
-   strokeWeight(1/sf);
+//   strokeWeight(2/sf);
 
 }
 else{
-   sf2 = abs($(window).innerHeight()-180)/(abs(ymax-ymin)+25);
+   sf2 = abs($(window).innerHeight()-180)/(abs(ymax-ymin)+30+(cr));
    scale(sf2,sf2);
-   strokeWeight(1/sf2);
+//   strokeWeight(2/sf2);
 }
 
 
-translate((-(xmin)+30),abs(ymin)+5);
+//translate((-(xmin)+30),abs(ymin)+5);
+translate(30,abs(ymin)+5+cr);
 
-/*
-if(xmax<140){
-   stroke(0,100,0,150);
-   fill(0,100,0,150);
+if(document.getElementById("cutout").checked==true){
+
+   noStroke();
+   fill(0,0,200,12);
+   beginShape();
+      for(i=0;i<cutout.length;i++){
+         vertex(cutout[i].X,cutout[i].Y);
+      }
+   endShape();
+
 }
-else{
-   stroke(200,0,0,150);
-   fill(200,0,0,150);
-}
-*/
 
-
-
+strokeWeight(1/sf2);
 stroke(0,100,0,150);
 fill(0,100,0,150);
 
@@ -244,7 +250,7 @@ text(nf(((xmax-xmin)/document.getElementById("size").value/25.4),1,2) + "\" ", n
 
 noFill();
 
-strokeWeight(1/sf2*2);
+strokeWeight(2/sf2);
 
 
 
@@ -305,14 +311,14 @@ stroke(100,0,100);
 
 
    for(j=0;j<pocket[i].length;j++){
-beginShape();
+      beginShape();
 
       for(j2=0;j2<pocket[i][j].length;j2++){
    
          vertex(nf(pocket[i][j][j2].X/100,0,1),nf(pocket[i][j][j2].Y/100,0,1));
       }
 
-endShape();
+      endShape();
 
       }
 
@@ -322,6 +328,12 @@ strokeWeight(1/sf2);
 stroke(0,0,0);
 fill(255,255,0);
 ellipse(xmin,ymax,2,2);
+
+//fill(220,165,0,100);
+noFill();
+strokeWeight(1/sf2);
+//rect(xmin-3,ymax+3,xmax-xmin+6,ymin-6);
+
 
 
 }
@@ -387,6 +399,8 @@ var tabs = [0,0]
 var ptabs = [0,0]
 var exfont = false
 var font
+var cutout = [];
+var cr = 10;
 
 function reload(){
 
@@ -408,6 +422,7 @@ function reload(){
    pocket = []
    pockets = []
    pocket_o = []
+   cutout = [];
 
    if(exfont==false){   
       loadfont()
@@ -437,11 +452,55 @@ $( "#keybutton" ).click(function() {
    else{
       txt = "?"
       reload()
-}
-   
+   }
 
 });
 
+
+$( "#radius" ).click(function() {
+
+
+   cutout = []
+
+
+   cr = window.prompt("ENTER OFFSET OF CUTOUT")
+   
+//   cr = parseInt(cr)    
+//      console.log(cr)
+   if(cr!=null){
+      makeCutout()
+   }
+   else{
+      cr = 5
+      makeCutout()
+   }
+
+});
+
+
+function makeCutout(){
+
+for (i=0;i<=100;i++) {
+
+   if(i<=25){
+      cutout.push({X:(xmax)+Math.sin((Math.PI*2)/100*i)*cr,Y:ymax+Math.cos((Math.PI*2)/100*i)*cr});
+   }
+   else if((i>25)&&(i<=50)){
+      cutout.push({X:(xmax)+Math.sin((Math.PI*2)/100*i)*cr,Y:ymin+Math.cos((Math.PI*2)/100*i)*cr});
+   }
+   else if((i>50)&&(i<=75)){
+      cutout.push({X:xmin+Math.sin((Math.PI*2)/100*i)*cr,Y:ymin+Math.cos((Math.PI*2)/100*i)*cr});      
+   }
+   else if((i>75)&&(i<=100)){
+      cutout.push({X:xmin+Math.sin((Math.PI*2)/100*i)*cr,Y:ymax+Math.cos((Math.PI*2)/100*i)*cr});     
+      if(i==100){
+         cutout.push({X:(xmax),Y:ymax+cr});
+      }
+   }
+
+}
+//console.log(cutout);
+}
 
 function loadfont() {
    fontFileName = 'fonts/' + document.getElementById("font").value
@@ -476,6 +535,8 @@ function onFontLoaded(font) {
 //var path = font.getPath(txt, 0, 0, document.getElementById("size").value)
 var path = font.getPath(txt, 0, 0, 152.4)
 
+//console.log(path.commands);
+
 for(i=0;i<path.commands.length;i++){
    if(path.commands[i].type=="M"){
    count.push(i)
@@ -509,6 +570,7 @@ dots = []
 var lines
 
 
+
 for(i=0;i<test.length;i++){
 
 dots.push([]);
@@ -540,6 +602,7 @@ dots.push([]);
          curve += test[i].commands[i2].x + " "
          curve += test[i].commands[i2].y + " "
 
+//type==C
 
          curve_length = parseFloat(Snap.path.getTotalLength(curve).toFixed(0))
 
@@ -831,6 +894,17 @@ pockets.push(pocket[l2r[i].index]);
 //console.log(pockets)
 pocket = pockets
 
+
+
+
+
+
+
+makeCutout()
+
+
+
+
 xy_offset = []
 points = []
 count = []
@@ -896,6 +970,25 @@ for(i=0;i<pocket.length;i++){
 }
 
 g+="g0z5\n"
+
+
+if(document.getElementById("cutout").checked==true){
+
+   g+="g0x"+((cutout[0].X/document.getElementById("size").value).toFixed(2))+"y"+ ((ymax-cutout[0].Y/document.getElementById("size").value).toFixed(2)) + "\n"
+   g+="g1z-"+ (pass_depth) + "f" + material.plunge + "\n"
+
+   
+
+for(i=1;i<cutout.length;i++){
+   g+="g1x"+((cutout[i].X/document.getElementById("size").value).toFixed(2)) +"y"+ ((ymax-cutout[i].Y/document.getElementById("size").value).toFixed(2)) + "f" + material.feed +  "\n"
+}
+
+}
+
+g+="g0z5\n"
+
+g+="g0x"+ ((xmax+cr)/document.getElementById("size").value).toFixed(2) + "y" + ((Math.abs(ymin)+cr)/document.getElementById("size").value).toFixed(2) + "\n"
+
 g+="m5\n"
 g+="m30\n"
 
@@ -921,6 +1014,7 @@ function onReadFile(evt) {
    exfont = true
    pocket = []
    pockets = []
+   cutout = [];
 
    
     var f = evt.target.files[0]; 
