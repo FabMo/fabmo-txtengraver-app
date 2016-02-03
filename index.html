@@ -132,6 +132,16 @@
 
     <form method="post">
       <fieldset class="ui-field-contain">
+        <label for="material">MATERIAL THICKNESS</label>
+        <select name="mthickness" id="mthickness">
+          <option value="6.35" selected>0.25"</option>
+        </select>
+      </fieldset>
+    </form>
+
+
+    <form method="post">
+      <fieldset class="ui-field-contain">
         <label for="day">CUTTING TOOL</label>
         <select name="tool" id="tool">
 
@@ -223,12 +233,23 @@ fill(0,100,0,150);
 
 
 //textSize(sf2*2);
+
+if(document.getElementById("cutout").checked==false){
 text(nf(((abs(ymin)+ymax)/document.getElementById("size").value/25.4),1,2) + "\" ", nf(xmin-27,1,0), nf(((ymin+ymax)/2),1,0));
-
-
 line(xmin-5,ymax,xmin-8,ymax);
 line(xmin-8,ymin,xmin-8,ymax);
 line(xmin-5,ymin,xmin-8,ymin);
+
+}
+else if(document.getElementById("cutout").checked==true){
+text(nf(((abs(ymin)+ymax+cr*2)/document.getElementById("size").value/25.4),1,2) + "\" ", nf(xmin-27,1,0), nf(((ymin+ymax)/2),1,0));
+line(xmin-5,ymax+cr,xmin-8,ymax+cr);
+line(xmin-8,ymin-cr,xmin-8,ymax+cr);
+line(xmin-5,ymin-cr,xmin-8,ymin-cr);
+
+}
+
+
 /*
 if(xmax<140){
    stroke(200,0,0,150);
@@ -242,11 +263,20 @@ else{
 stroke(200,0,0,150);
 fill(180,0,0,150);
 
+if(document.getElementById("cutout").checked==false){
 line(xmin,ymax+8,xmin,ymax+5);
 line(xmin,ymax+8,xmax,ymax+8);
 line(xmax,ymax+8,xmax,ymax+5);
-
 text(nf(((xmax-xmin)/document.getElementById("size").value/25.4),1,2) + "\" ", nf(xmax/2-5,1,0), nf(ymax+16,1,0));
+}
+else if(document.getElementById("cutout").checked==true){
+line(xmin-cr,ymax+8,xmin-cr,ymax+5);
+line(xmin-cr,ymax+8,xmax+cr,ymax+8);
+line(xmax+cr,ymax+8,xmax+cr,ymax+5);
+text(nf(((xmax-xmin+cr*2)/document.getElementById("size").value/25.4),1,2) + "\" ", nf(xmax/2-5,1,0), nf(ymax+16,1,0));
+}
+
+
 
 noFill();
 
@@ -349,6 +379,7 @@ delta = []
 tabs = []
 pocket = []
 pockets = []
+cutout=[]
 setTimeout(loadtxt(), 100)
 
 }
@@ -465,14 +496,14 @@ $( "#radius" ).click(function() {
 
    cr = window.prompt("ENTER OFFSET OF CUTOUT")
    
-//   cr = parseInt(cr)    
+   cr = parseInt(cr)    
 //      console.log(cr)
    if(cr!=null){
-      makeCutout()
+      reload()
    }
    else{
       cr = 5
-      makeCutout()
+      reload()
    }
 
 });
@@ -494,7 +525,7 @@ for (i=0;i<=100;i++) {
    else if((i>75)&&(i<=100)){
       cutout.push({X:xmin+Math.sin((Math.PI*2)/100*i)*cr,Y:ymax+Math.cos((Math.PI*2)/100*i)*cr});     
       if(i==100){
-         cutout.push({X:(xmax),Y:ymax+cr});
+         cutout.push({X:(xmax),Y:(ymax+cr)});
       }
    }
 
@@ -974,13 +1005,23 @@ g+="g0z5\n"
 
 if(document.getElementById("cutout").checked==true){
 
-   g+="g0x"+((cutout[0].X/document.getElementById("size").value).toFixed(2))+"y"+ ((ymax-cutout[0].Y/document.getElementById("size").value).toFixed(2)) + "\n"
-   g+="g1z-"+ (pass_depth) + "f" + material.plunge + "\n"
+pass = 1
+pass_no = (document.getElementById("mthickness").value/(document.getElementById("tool").value*25.4)).toFixed(0)
+if(pass_no==0){
+   pass_no=1
+}
+pass_depth = document.getElementById("mthickness").value/pass_no
 
+   g+="g0x"+((cutout[0].X/document.getElementById("size").value).toFixed(2))+"y"+ ((ymax-cutout[0].Y/document.getElementById("size").value).toFixed(2)) + "\n"
    
 
-for(i=1;i<cutout.length;i++){
-   g+="g1x"+((cutout[i].X/document.getElementById("size").value).toFixed(2)) +"y"+ ((ymax-cutout[i].Y/document.getElementById("size").value).toFixed(2)) + "f" + material.feed +  "\n"
+while(pass<=pass_no){
+   
+   g+="g1z-"+ (pass_depth*pass) + "f" + material.plunge + "\n"
+   for(i=1;i<cutout.length;i++){
+      g+="g1x"+((cutout[i].X/document.getElementById("size").value).toFixed(2)) +"y"+ ((ymax-cutout[i].Y/       document.getElementById("size").value).toFixed(2)) + "f" + material.feed +  "\n"
+   }
+   pass++
 }
 
 }
