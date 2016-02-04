@@ -4,8 +4,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" charset="utf-8"/>
 <link rel="stylesheet" href="css/jquery.mobile-1.4.5.css">
 
-<script src="js/libs/dashboard.js"></script>
+
 <script src="js/jquery-1.11.2.min.js"></script>
+<script src="js/libs/fabmo.js"></script>
+    <script type="text/javascript">
+        var fabmo = new FabMoDashboard();
+    </script>
 <script src="js/control.js"></script>
 <script src="js/config.js"></script>
 <script src="js/jquery.mobile-1.4.5.js"></script>
@@ -57,8 +61,7 @@
   </div>
   <div data-role="footer" style="text-align:center;">
    cutout:
-   <a href="#" id="radius" class="ui-btn ui-corner-all ui-shadow ui-icon-clock ui-btn-icon-left">RADIUS</a>
-   <input type="checkbox" data-role="flipswitch" name="cutout" id="cutout" checked/>
+   <input type="checkbox" data-role="flipswitch" name="cutout" id="cutout" onclick="cutOut();" checked/>
     <span class="ui-btn ui-corner-all ui-shadow ui-icon-plus ui-btn-icon-left" id="loadfont" onclick="getFont();">
        <span>LOAD FONT</span>
        <input type="file" name="files[]" multiple data-role="none"/>
@@ -134,7 +137,10 @@
       <fieldset class="ui-field-contain">
         <label for="material">MATERIAL THICKNESS</label>
         <select name="mthickness" id="mthickness">
-          <option value="6.35" selected>0.25"</option>
+          <option value="1.7" selected>0.0625"</option>
+          <option value="3.25">0.125"</option>
+          <option value="6.5">0.25"</option>
+          <option value="13">0.5"</option>
         </select>
       </fieldset>
     </form>
@@ -206,19 +212,19 @@ if((xmax*sf2)>($(window).innerWidth())){
 
 }
 else{
-   sf2 = abs($(window).innerHeight()-180)/(abs(ymax-ymin)+30+(cr));
+   sf2 = abs($(window).innerHeight()-180)/(abs(ymax-ymin)+30+(cr*2)+(offset*2));
    scale(sf2,sf2);
 //   strokeWeight(2/sf2);
 }
 
 
 //translate((-(xmin)+30),abs(ymin)+5);
-translate(30,abs(ymin)+5+cr);
+translate(30,abs(ymin)+5+cr+offset);
 
 if(document.getElementById("cutout").checked==true){
 
    noStroke();
-   fill(0,0,200,12);
+   fill(0,0,200,20);
    beginShape();
       for(i=0;i<cutout.length;i++){
          vertex(cutout[i].X,cutout[i].Y);
@@ -234,6 +240,8 @@ fill(0,100,0,150);
 
 //textSize(sf2*2);
 
+
+
 if(document.getElementById("cutout").checked==false){
 text(nf(((abs(ymin)+ymax)/document.getElementById("size").value/25.4),1,2) + "\" ", nf(xmin-27,1,0), nf(((ymin+ymax)/2),1,0));
 line(xmin-5,ymax,xmin-8,ymax);
@@ -243,23 +251,14 @@ line(xmin-5,ymin,xmin-8,ymin);
 }
 else if(document.getElementById("cutout").checked==true){
 text(nf(((abs(ymin)+ymax+cr*2)/document.getElementById("size").value/25.4),1,2) + "\" ", nf(xmin-27,1,0), nf(((ymin+ymax)/2),1,0));
-line(xmin-5,ymax+cr,xmin-8,ymax+cr);
-line(xmin-8,ymin-cr,xmin-8,ymax+cr);
-line(xmin-5,ymin-cr,xmin-8,ymin-cr);
+line(xmin-5,ymax+cr+offset,xmin-8,ymax+cr+offset);
+line(xmin-8,ymin-cr-offset,xmin-8,ymax+cr+offset);
+line(xmin-5,ymin-cr-offset,xmin-8,ymin-cr-offset);
 
 }
 
 
-/*
-if(xmax<140){
-   stroke(200,0,0,150);
-   fill(180,0,0,150);
-}
-else{
-   stroke(0,100,0,150);
-   fill(0,100,0,150);
-}
-*/
+
 stroke(200,0,0,150);
 fill(180,0,0,150);
 
@@ -270,9 +269,9 @@ line(xmax,ymax+8,xmax,ymax+5);
 text(nf(((xmax-xmin)/document.getElementById("size").value/25.4),1,2) + "\" ", nf(xmax/2-5,1,0), nf(ymax+16,1,0));
 }
 else if(document.getElementById("cutout").checked==true){
-line(xmin-cr,ymax+8,xmin-cr,ymax+5);
-line(xmin-cr,ymax+8,xmax+cr,ymax+8);
-line(xmax+cr,ymax+8,xmax+cr,ymax+5);
+line(xmin-cr-offset,ymax+8,xmin-cr-offset,ymax+5);
+line(xmin-cr-offset,ymax+8,xmax+cr+offset,ymax+8);
+line(xmax+cr+offset,ymax+8,xmax+cr+offset,ymax+5);
 text(nf(((xmax-xmin+cr*2)/document.getElementById("size").value/25.4),1,2) + "\" ", nf(xmax/2-5,1,0), nf(ymax+16,1,0));
 }
 
@@ -319,7 +318,7 @@ endShape();
 
 }
 
-stroke(100,0,100,180);
+stroke(100,0,100,100);
 
 for(i=0;i<pocket.length;i++){
 
@@ -357,7 +356,12 @@ stroke(100,0,100);
 strokeWeight(1/sf2);
 stroke(0,0,0);
 fill(255,255,0);
-ellipse(xmin,ymax,2,2);
+if(document.getElementById("cutout").checked==true){
+//ellipse(xmin-(cr+offset),ymax+(cr+offset),2,2);
+}
+else{
+//ellipse(xmin,ymax,2,2);
+}
 
 //fill(220,165,0,100);
 noFill();
@@ -383,8 +387,6 @@ cutout=[]
 setTimeout(loadtxt(), 100)
 
 }
-
-
 
 
 
@@ -432,6 +434,7 @@ var exfont = false
 var font
 var cutout = [];
 var cr = 10;
+var offset = 5;
 
 function reload(){
 
@@ -502,7 +505,7 @@ $( "#radius" ).click(function() {
       reload()
    }
    else{
-      cr = 5
+      cr = 0
       reload()
    }
 
@@ -514,18 +517,18 @@ function makeCutout(){
 for (i=0;i<=100;i++) {
 
    if(i<=25){
-      cutout.push({X:(xmax)+Math.sin((Math.PI*2)/100*i)*cr,Y:ymax+Math.cos((Math.PI*2)/100*i)*cr});
+      cutout.push({X:(xmax+offset)+Math.sin((Math.PI*2)/100*i)*cr,Y:ymax+offset+Math.cos((Math.PI*2)/100*i)*cr});
    }
    else if((i>25)&&(i<=50)){
-      cutout.push({X:(xmax)+Math.sin((Math.PI*2)/100*i)*cr,Y:ymin+Math.cos((Math.PI*2)/100*i)*cr});
+      cutout.push({X:(xmax+offset)+Math.sin((Math.PI*2)/100*i)*cr,Y:ymin-offset+Math.cos((Math.PI*2)/100*i)*cr});
    }
    else if((i>50)&&(i<=75)){
-      cutout.push({X:xmin+Math.sin((Math.PI*2)/100*i)*cr,Y:ymin+Math.cos((Math.PI*2)/100*i)*cr});      
+      cutout.push({X:xmin-offset+Math.sin((Math.PI*2)/100*i)*cr,Y:ymin-offset+Math.cos((Math.PI*2)/100*i)*cr});      
    }
    else if((i>75)&&(i<=100)){
-      cutout.push({X:xmin+Math.sin((Math.PI*2)/100*i)*cr,Y:ymax+Math.cos((Math.PI*2)/100*i)*cr});     
+      cutout.push({X:xmin-offset+Math.sin((Math.PI*2)/100*i)*cr,Y:ymax+offset+Math.cos((Math.PI*2)/100*i)*cr});     
       if(i==100){
-         cutout.push({X:(xmax),Y:(ymax+cr)});
+         cutout.push({X:(xmax+offset),Y:(ymax+offset+cr)});
       }
    }
 
@@ -707,9 +710,21 @@ tool_diameter= (document.getElementById("tool").value * document.getElementById(
 
 var scale = 100
 
+
 ClipperLib.JS.ScaleUpPaths(points, scale)
 
+
+
 var simple_paths = ClipperLib.Clipper.SimplifyPolygons(points, ClipperLib.PolyFillType.pftNonZero)
+
+makeCutout()
+//for(i=0;i<cutout.length;i++){
+//cutout[i].X=parseInt((cutout[i].X*100).toFixed(0));
+//cutout[i].Y=parseInt((cutout[i].Y*100).toFixed(0));
+//}
+//console.log(cutout);
+//simple_paths.push(cutout);
+
 var co = new ClipperLib.ClipperOffset((tool_diameter/2*25.4), 0.25)
 co.AddPaths(simple_paths, ClipperLib.JoinType.jtMiter, ClipperLib.EndType.etClosedPolygon)
 
@@ -927,15 +942,6 @@ pocket = pockets
 
 
 
-
-
-
-
-makeCutout()
-
-
-
-
 xy_offset = []
 points = []
 count = []
@@ -1003,6 +1009,7 @@ for(i=0;i<pocket.length;i++){
 g+="g0z5\n"
 
 
+
 if(document.getElementById("cutout").checked==true){
 
 pass = 1
@@ -1037,7 +1044,15 @@ g+="m30\n"
 //console.log(pass_no)
 //console.log(pass_depth)
 
-fabmoDashboard.submitJob(g, {filename : txt+'.g', name : "TEXT: " + txt, description : "FONT: " + document.getElementById("font").value})
+
+
+    fabmo.submitJob({
+      file : g,
+      filename : txt + '.g',
+      name : "TEXT: " + txt,
+      description : "FONT: " + document.getElementById("font").value 
+    });
+
 
 g=""
 
@@ -1078,9 +1093,13 @@ function onReadFile(evt) {
 
 }
 
+
+
 document.getElementById('font').addEventListener('click', function(){
     exfont = false
 });
+
+
 
 document.getElementById('loadfont').addEventListener('change', onReadFile, false);
 
