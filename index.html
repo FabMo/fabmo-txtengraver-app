@@ -42,8 +42,10 @@
 
 <div data-role="page" id="pagezero">
   <div data-role="header">
+	<!--
     <a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-eye ui-btn-icon-left" onclick="toggleFullScreen();">FULLSCREEN</a>
-    <h1>PRESS A KEY</h1>
+	-->
+    <h1>PRESS A KEY OR ENTER TEXT IN SETUP</h1>
     <div data-role="navbar">
       <ul>
         <li><a href="#pageone">SETUP</a></li>
@@ -61,7 +63,9 @@
        <span>LOAD FONT</span>
        <input type="file" name="files[]" multiple data-role="none"/>
     </span>
+	 <!--
     <a href="#" id="keybutton" class="ui-btn ui-corner-all ui-shadow ui-icon-edit ui-btn-icon-left">EDIT TEXT</a>
+	 -->
     <a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-action ui-btn-icon-right" onclick="make();">SUBMIT JOB</a>
   </div>
 </div> 
@@ -78,6 +82,45 @@
     </div>
   </div>
   <div data-role="main" class="ui-content">
+
+    <form method="post">
+      <fieldset class="ui-field-contain">
+        <label for="textInput">TEXT</label>
+			<input type='text' id="txt" value="text"/>
+      </fieldset>
+    </form>
+
+    <form method="post">
+      <fieldset class="ui-field-contain">
+
+         <label for="size">FONT SIZE (inch)</label>
+         <input name="size" id="size" value = 2 step="0.05" min="0.2"></input>
+
+        </select>
+      </fieldset>
+    </form>
+
+
+    <form method="post">
+      <fieldset class="ui-field-contain">
+
+         <label for="margin">CUTOUT MARGIN (inch)</label>
+         <input type="number" name="margin" id="margin" value ="0.25" step="0.05" min="0"></input>
+
+        </select> 
+      </fieldset>
+    </form>
+
+    <form method="post">
+      <fieldset class="ui-field-contain">
+
+         <label for="cradius">CUTOUT RADIUS (inch)</label>
+         <input type="number" name="cradius" id="cradius" value ="0.125" step="0.05" min="0"></input>
+
+        </select>
+      </fieldset>
+    </form>
+
     <form method="post">
       <fieldset class="ui-field-contain">
         <label for="font">FONT</label>
@@ -92,20 +135,7 @@
       </fieldset>
     </form>
 
-    <form method="post">
-      <fieldset class="ui-field-contain">
 
-         <label for="size">FONT SIZE</label>
-         <select name="size" id="size">
-
-          <option value="12">1/2"</option>
-          <option value="6">1"</option>
-          <option value="3" selected>2"</option>
-          <option value="2">3"</option>
-
-        </select>
-      </fieldset>
-    </form>
 
     <form method="post">
       <fieldset class="ui-field-contain">
@@ -190,180 +220,128 @@ void setup(){
 }
 
 void draw(){
-background(235);
 
-document.getElementById("2D").focus();
+	background(235);
 
-//console.log(ymax-ymin);
+	document.getElementById("2D").focus();
 
-size($(window).innerWidth()-30,$(window).innerHeight()-180);
-
-
-if((xmax*sf2)>($(window).innerWidth())){
-   sf = abs($(window).innerWidth())/(abs(xmax-xmin)+120);
-   scale(sf,sf);
-   textSize(12/sf);
-//   strokeWeight(2/sf);
-
-}
-else{
-   sf2 = abs($(window).innerHeight()-180)/(abs(ymax-ymin)+30+(cr*2)+(offset*2));
-   scale(sf2,sf2);
-//   strokeWeight(2/sf2);
-}
+	size($(window).innerWidth()-30,$(window).innerHeight()-180);
 
 
-//translate((-(xmin)+30),abs(ymin)+5);
-translate(30,abs(ymin)+5+cr+offset);
+	if((xmax*sf2)>($(window).innerWidth())){
+	   sf = abs($(window).innerWidth())/(abs(xmax-xmin)+120);
+	   scale(sf,sf);
+	   textSize(12/sf);
+	}
+	else{
+   	sf2 = abs($(window).innerHeight()-180)/(abs(ymax-ymin)+30+(cr*2)+(offset*2));
+   	scale(sf2,sf2);
+	}
 
-if(document.getElementById("cutout").checked==true){
+	strokeWeight(2/sf2);
+	//translate((-(xmin)+30),abs(ymin)+5);
+	translate(30,abs(ymin)+5+cr+offset);
+	if(document.getElementById("cutout").checked==true){
+   	//noStroke();
+   	//fill(0,0,200,20);
+   	beginShape();
+   	   for(i=0;i<cutout.length;i++){
+   	      vertex(cutout[i].X,cutout[i].Y);
+   	   }
+   	endShape();
+	}
 
-   noStroke();
-   fill(0,0,200,20);
-   beginShape();
-      for(i=0;i<cutout.length;i++){
-         vertex(cutout[i].X,cutout[i].Y);
+	strokeWeight(1/sf2);
+	stroke(0,100,0,150);
+	fill(0,100,0,150);
+
+
+	if(document.getElementById("cutout").checked==false){
+		text(nf( ((((abs(ymin)+ymax)/(6/(document.getElementById("size").value*scaleUp))))/25.4),1,2) + "\" ", nf(xmin-27,1,0), nf(((ymin+ymax)/2),1,0));
+		line(xmin-5,ymax,xmin-8,ymax);
+		line(xmin-8,ymin,xmin-8,ymax);
+		line(xmin-5,ymin,xmin-8,ymin);
+	}
+	else if(document.getElementById("cutout").checked==true){
+		text(nf(( ((abs(ymin)+ymax)/(6/(document.getElementById("size").value*scaleUp))+offset*2)/25.4),1,2) + "\" ", nf(xmin-27,1,0), nf(((ymin+ymax)/2),1,0));
+		line(xmin-5,ymax+offset,xmin-8,ymax+offset);
+		line(xmin-8,ymin-offset,xmin-8,ymax+offset);
+		line(xmin-5,ymin-offset,xmin-8,ymin-offset);
+	}
+
+	stroke(200,0,0,150);	
+	fill(180,0,0,150);
+
+	if(document.getElementById("cutout").checked==false){
+		line(xmin,ymax+8,xmin,ymax+5);
+		line(xmin,ymax+8,xmax,ymax+8);
+		line(xmax,ymax+8,xmax,ymax+5);
+		text(nf(((xmax-xmin)/(6/(document.getElementById("size").value*scaleUp))/25.4),1,2) + "\" ", nf(xmax/2-5,1,0), nf(ymax+16,1,0));
+	}
+	else if(document.getElementById("cutout").checked==true){
+		line(xmin-offset,ymax+8,xmin-offset,ymax+5);
+		line(xmin-offset,ymax+8,xmax+offset,ymax+8);
+		line(xmax+offset,ymax+8,xmax+offset,ymax+5);
+		text(nf( ((((xmax-xmin)/(6/(document.getElementById("size").value*scaleUp)))+offset*2)/25.4),1,2) + "\" ", nf(xmax/2-5,1,0), nf(ymax+16,1,0));
+	}
+
+	noFill();
+
+	strokeWeight(2/sf2);
+
+	for(i=0;i<dots.length;i++){
+
+	   stroke(0);
+   	beginShape();
+
+	   for(j=0;j<dots[i].length;j++){
+   	      if(j==0){
+   	         stroke(255,0,0);
+	            //ellipse(dots[i][j][0],dots[i][j][1],0.5,0.5);
+   	         vertex(dots[i][j][0],dots[i][j][1]);
+   	      }
+   	      else if(j==1){
+   	         stroke(0,0,255);
+ 	            //ellipse(dots[i][j][0],dots[i][j][1],0.5,0.5);
+   	         vertex(dots[i][j][0],dots[i][j][1]);
+   	      }
+	         else if(j!=dots[i].length-1){
+   	         stroke(0);
+   	         //ellipse(dots[i][j][0],dots[i][j][1],sf2*0.1,sf2*0.1);
+   	         vertex(dots[i][j][0],dots[i][j][1]);
+   	      }
+   	      else{
+   	        vertex(dots[i][j][0],dots[i][j][1]);
+   	      }           
+   	}
+		endShape();
+	}	
+
+	stroke(100,0,100,100);
+
+	for(i=0;i<pocket.length;i++){
+	   for(j=0;j<pocket[i].length;j++){
+    	  beginShape();
+
+    	  for(j2=0;j2<pocket[i][j].length;j2++){   
+				vertex(nf(pocket[i][j][j2].X/100,0,1),nf(pocket[i][j][j2].Y/100,0,1));
+			}
+      	endShape();
       }
-   endShape();
+	}
 
-}
+	strokeWeight(1/sf2);
+	stroke(0,0,0);
+	fill(255,255,0);
+	if(document.getElementById("cutout").checked==true){
+		//ellipse(xmin-(cr+offset),ymax+(cr+offset),2,2);
+	}
+	else{
+		//ellipse(xmin,ymax,2,2);
+	}
 
-strokeWeight(1/sf2);
-stroke(0,100,0,150);
-fill(0,100,0,150);
-
-
-//textSize(sf2*2);
-
-
-
-if(document.getElementById("cutout").checked==false){
-text(nf(((abs(ymin)+ymax)/document.getElementById("size").value/25.4),1,2) + "\" ", nf(xmin-27,1,0), nf(((ymin+ymax)/2),1,0));
-line(xmin-5,ymax,xmin-8,ymax);
-line(xmin-8,ymin,xmin-8,ymax);
-line(xmin-5,ymin,xmin-8,ymin);
-
-}
-else if(document.getElementById("cutout").checked==true){
-text(nf(((abs(ymin)+ymax+cr*2)/document.getElementById("size").value/25.4),1,2) + "\" ", nf(xmin-27,1,0), nf(((ymin+ymax)/2),1,0));
-line(xmin-5,ymax+cr+offset,xmin-8,ymax+cr+offset);
-line(xmin-8,ymin-cr-offset,xmin-8,ymax+cr+offset);
-line(xmin-5,ymin-cr-offset,xmin-8,ymin-cr-offset);
-
-}
-
-
-
-stroke(200,0,0,150);
-fill(180,0,0,150);
-
-if(document.getElementById("cutout").checked==false){
-line(xmin,ymax+8,xmin,ymax+5);
-line(xmin,ymax+8,xmax,ymax+8);
-line(xmax,ymax+8,xmax,ymax+5);
-text(nf(((xmax-xmin)/document.getElementById("size").value/25.4),1,2) + "\" ", nf(xmax/2-5,1,0), nf(ymax+16,1,0));
-}
-else if(document.getElementById("cutout").checked==true){
-line(xmin-cr-offset,ymax+8,xmin-cr-offset,ymax+5);
-line(xmin-cr-offset,ymax+8,xmax+cr+offset,ymax+8);
-line(xmax+cr+offset,ymax+8,xmax+cr+offset,ymax+5);
-text(nf(((xmax-xmin+cr*2)/document.getElementById("size").value/25.4),1,2) + "\" ", nf(xmax/2-5,1,0), nf(ymax+16,1,0));
-}
-
-
-
-noFill();
-
-strokeWeight(2/sf2);
-
-
-
-for(i=0;i<dots.length;i++){
-
-
-   stroke(0);
-
-
-
-   beginShape();
-
-   for(j=0;j<dots[i].length;j++){
-         if(j==0){
-            stroke(255,0,0);
-//            ellipse(dots[i][j][0],dots[i][j][1],0.5,0.5);
-            vertex(dots[i][j][0],dots[i][j][1]);
-         }
-         else if(j==1){
-            stroke(0,0,255);
-//            ellipse(dots[i][j][0],dots[i][j][1],0.5,0.5);
-            vertex(dots[i][j][0],dots[i][j][1]);
-         }
-         else if(j!=dots[i].length-1){
-            stroke(0);
-//            ellipse(dots[i][j][0],dots[i][j][1],sf2*0.1,sf2*0.1);
-            vertex(dots[i][j][0],dots[i][j][1]);
-         }
-         else{
-           vertex(dots[i][j][0],dots[i][j][1]);
-         }         
-      
-   }
-
-endShape();
-
-}
-
-stroke(100,0,100,100);
-
-for(i=0;i<pocket.length;i++){
-
-/*
-if(i==0){
-stroke(100,0,0);
-}
-else if(i==1){
-stroke(0,100,0);
-}
-else if(i==2){
-stroke(0,0,100);
-}
-else if(i==3){
-stroke(100,0,100);
-}
-*/
-
-
-
-   for(j=0;j<pocket[i].length;j++){
-      beginShape();
-
-      for(j2=0;j2<pocket[i][j].length;j2++){
-   
-         vertex(nf(pocket[i][j][j2].X/100,0,1),nf(pocket[i][j][j2].Y/100,0,1));
-      }
-
-      endShape();
-
-      }
-
-}
-
-strokeWeight(1/sf2);
-stroke(0,0,0);
-fill(255,255,0);
-if(document.getElementById("cutout").checked==true){
-//ellipse(xmin-(cr+offset),ymax+(cr+offset),2,2);
-}
-else{
-//ellipse(xmin,ymax,2,2);
-}
-
-//fill(220,165,0,100);
-noFill();
-strokeWeight(1/sf2);
-//rect(xmin-3,ymax+3,xmax-xmin+6,ymin-6);
-
-
+	noFill();
+	strokeWeight(1/sf2);
 
 }
 
@@ -372,22 +350,25 @@ strokeWeight(1/sf2);
 void keyPressed() {
 
 
-txt = String.fromCharCode(key);
+	txt = String.fromCharCode(key);
 
-delta = []
-tabs = []
-pocket = []
-pockets = []
-cutout=[]
-setTimeout(loadtxt(), 100)
+	document.getElementById('txt').value=txt
+
+	delta = []
+	tabs = []
+	pocket = []
+	pockets = []
+	cutout=[]
+	setTimeout(loadtxt(), 100)
 
 }
-
-
 
 </script>
 
 <script>
+
+//TODO
+
 
 var fabmo = new FabMoDashboard();
 
@@ -403,7 +384,7 @@ var test = []
 var test2 = []
 var len = []
 var points = []
-var txt = "?"
+var txt
 var xy = []
 var xy_offset = []
 var oset = [[0,1]]
@@ -429,9 +410,10 @@ var tabs = [0,0]
 var ptabs = [0,0]
 var exfont = false
 var font
-var cutout = [];
-var cr = 10;
-var offset = 5;
+var cutout = []
+var cr
+var offset 
+var scaleUp = 1
 
 function reload(){
 
@@ -453,7 +435,8 @@ function reload(){
    pocket = []
    pockets = []
    pocket_o = []
-   cutout = [];
+   cutout = []
+	txt = document.getElementById('txt').value
 
    if(exfont==false){   
       loadfont()
@@ -497,7 +480,6 @@ $( "#radius" ).click(function() {
    cr = window.prompt("ENTER OFFSET OF CUTOUT")
    
    cr = parseInt(cr)    
-//      console.log(cr)
    if(cr!=null){
       reload()
    }
@@ -511,26 +493,29 @@ $( "#radius" ).click(function() {
 
 function makeCutout(){
 
+offset=document.getElementById('margin').value*25.4
+cr = document.getElementById('cradius').value*25.4
+
 for (i=0;i<=100;i++) {
 
    if(i<=25){
-      cutout.push({X:(xmax+offset)+Math.sin((Math.PI*2)/100*i)*cr,Y:ymax+offset+Math.cos((Math.PI*2)/100*i)*cr});
+      cutout.push({X:(xmax+offset-cr)+Math.sin((Math.PI*2)/100*i)*cr,Y:ymax+offset-cr+Math.cos((Math.PI*2)/100*i)*cr})
    }
    else if((i>25)&&(i<=50)){
-      cutout.push({X:(xmax+offset)+Math.sin((Math.PI*2)/100*i)*cr,Y:ymin-offset+Math.cos((Math.PI*2)/100*i)*cr});
+      cutout.push({X:(xmax+offset-cr)+Math.sin((Math.PI*2)/100*i)*cr,Y:ymin-offset+cr+Math.cos((Math.PI*2)/100*i)*cr})
    }
    else if((i>50)&&(i<=75)){
-      cutout.push({X:xmin-offset+Math.sin((Math.PI*2)/100*i)*cr,Y:ymin-offset+Math.cos((Math.PI*2)/100*i)*cr});      
+      cutout.push({X:xmin-offset+cr+Math.sin((Math.PI*2)/100*i)*cr,Y:ymin-offset+cr+Math.cos((Math.PI*2)/100*i)*cr})     
    }
    else if((i>75)&&(i<=100)){
-      cutout.push({X:xmin-offset+Math.sin((Math.PI*2)/100*i)*cr,Y:ymax+offset+Math.cos((Math.PI*2)/100*i)*cr});     
+      cutout.push({X:xmin-offset+cr+Math.sin((Math.PI*2)/100*i)*cr,Y:ymax+offset-cr+Math.cos((Math.PI*2)/100*i)*cr})    
       if(i==100){
-         cutout.push({X:(xmax+offset),Y:(ymax+offset+cr)});
+         cutout.push({X:(xmax+offset-cr),Y:(ymax+offset)})
       }
    }
 
 }
-//console.log(cutout);
+
 }
 
 function loadfont() {
@@ -562,11 +547,7 @@ function loadtxt() {
 
 function onFontLoaded(font) {
 
-
-//var path = font.getPath(txt, 0, 0, document.getElementById("size").value)
 var path = font.getPath(txt, 0, 0, 152.4)
-
-//console.log(path.commands);
 
 for(i=0;i<path.commands.length;i++){
    if(path.commands[i].type=="M"){
@@ -633,8 +614,6 @@ dots.push([]);
          curve += test[i].commands[i2].x + " "
          curve += test[i].commands[i2].y + " "
 
-//type==C
-
          curve_length = parseFloat(Snap.path.getTotalLength(curve).toFixed(0))
 
 
@@ -683,7 +662,6 @@ points.push([]);
 
 }
 
-//console.log(dots);
 
 if(dots.length<1){
 
@@ -699,11 +677,11 @@ else{
    ymax = (Math.max.apply(Math, y))
 }
 
+scaleUp = document.getElementById('size').value / ( (Math.abs(ymin)+ymax)/(6/(document.getElementById("size").value))/25.4 )
 
-tool_diameter= (document.getElementById("tool").value * document.getElementById("size").value)
 
-//console.log(document.getElementById("size").value);
-//console.log(tool_diameter);
+tool_diameter= (document.getElementById("tool").value * (6/(document.getElementById("size").value*scaleUp)))
+
 
 var scale = 100
 
@@ -715,12 +693,6 @@ ClipperLib.JS.ScaleUpPaths(points, scale)
 var simple_paths = ClipperLib.Clipper.SimplifyPolygons(points, ClipperLib.PolyFillType.pftNonZero)
 
 makeCutout()
-//for(i=0;i<cutout.length;i++){
-//cutout[i].X=parseInt((cutout[i].X*100).toFixed(0));
-//cutout[i].Y=parseInt((cutout[i].Y*100).toFixed(0));
-//}
-//console.log(cutout);
-//simple_paths.push(cutout);
 
 var co = new ClipperLib.ClipperOffset((tool_diameter/2*25.4), 0.25)
 co.AddPaths(simple_paths, ClipperLib.JoinType.jtMiter, ClipperLib.EndType.etClosedPolygon)
@@ -733,7 +705,7 @@ while(i>0){
    
    offsetted_paths = new ClipperLib.Paths()
 //   co.Execute(offsetted_paths,-((tool_diameter/2*25.4)*i) * scale)
-//   document.getElementById("size").value
+//   (6/(document.getElementById("size").value*scaleUp))
 
 if(i==1){
    co.Execute(offsetted_paths,-(tool_diameter/2*25.4) * scale)
@@ -988,11 +960,11 @@ for(i=0;i<pocket.length;i++){
    for(j=0;j<pocket[i].length;j++){
       for(j2=0;j2<pocket[i][j].length;j2++){
             if(j2==0){
-               g+= "g0x" + ((pocket[i][j][j2].X/100)/document.getElementById("size").value).toFixed(2) + "y" + ((ymax-(pocket[i][j][j2].Y/100)/document.getElementById("size").value).toFixed(2)) + "\n"
+               g+= "g0x" + ((pocket[i][j][j2].X/100)/(6/(document.getElementById("size").value*scaleUp))).toFixed(2) + "y" + ((ymax-(pocket[i][j][j2].Y/100)/(6/(document.getElementById("size").value*scaleUp))).toFixed(2)) + "\n"
                g+="g1z-" + (pass_depth*pass) + "f" + material.plunge + "\n"
             }
             else{              
-               g+= "g1x" + ((pocket[i][j][j2].X/100)/document.getElementById("size").value).toFixed(2) + "y" + (((ymax/document.getElementById("size").value)-(pocket[i][j][j2].Y/100)/document.getElementById("size").value).toFixed(2)) + "f" + material.feed + "\n"
+               g+= "g1x" + ((pocket[i][j][j2].X/100)/(6/(document.getElementById("size").value*scaleUp))).toFixed(2) + "y" + (((ymax/(6/(document.getElementById("size").value*scaleUp)))-(pocket[i][j][j2].Y/100)/(6/(document.getElementById("size").value*scaleUp))).toFixed(2)) + "f" + material.feed + "\n"
             }
        }
        g+="g0z1\n"     
@@ -1016,14 +988,14 @@ if(pass_no==0){
 }
 pass_depth = document.getElementById("mthickness").value/pass_no
 
-   g+="g0x"+((cutout[0].X/document.getElementById("size").value).toFixed(2))+"y"+ ((ymax-cutout[0].Y/document.getElementById("size").value).toFixed(2)) + "\n"
+   g+="g0x"+((cutout[0].X/(6/(document.getElementById("size").value*scaleUp))).toFixed(2))+"y"+ ((ymax-cutout[0].Y/(6/(document.getElementById("size").value*scaleUp))).toFixed(2)) + "\n"
    
 
 while(pass<=pass_no){
    
    g+="g1z-"+ (pass_depth*pass) + "f" + material.plunge + "\n"
    for(i=1;i<cutout.length;i++){
-      g+="g1x"+((cutout[i].X/document.getElementById("size").value).toFixed(2)) +"y"+ ((ymax-cutout[i].Y/       document.getElementById("size").value).toFixed(2)) + "f" + material.feed +  "\n"
+      g+="g1x"+((cutout[i].X/(6/(document.getElementById("size").value*scaleUp))).toFixed(2)) +"y"+ ((ymax-cutout[i].Y/(6/(document.getElementById("size").value*scaleUp))).toFixed(2)) + "f" + material.feed +  "\n"
    }
    pass++
 }
@@ -1032,7 +1004,7 @@ while(pass<=pass_no){
 
 g+="g0z5\n"
 
-g+="g0x"+ ((xmax+cr)/document.getElementById("size").value).toFixed(2) + "y" + ((Math.abs(ymin)+cr)/document.getElementById("size").value).toFixed(2) + "\n"
+g+="g0x"+ ((xmax+offset)/(6/(document.getElementById("size").value*scaleUp))).toFixed(2) + "y" + ((Math.abs(ymin)+offset)/(6/(document.getElementById("size").value*scaleUp))).toFixed(2) + "\n"
 
 g+="m5\n"
 g+="m30\n"
@@ -1090,13 +1062,9 @@ function onReadFile(evt) {
 
 }
 
-
-
 document.getElementById('font').addEventListener('click', function(){
     exfont = false
 });
-
-
 
 document.getElementById('loadfont').addEventListener('change', onReadFile, false);
 
