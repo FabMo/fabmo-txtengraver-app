@@ -42,9 +42,6 @@
 
 <div data-role="page" id="pagezero">
   <div data-role="header">
-	<!--
-    <a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-eye ui-btn-icon-left" onclick="toggleFullScreen();">FULLSCREEN</a>
-	-->
     <h1>PRESS A KEY OR ENTER TEXT IN SETUP</h1>
     <div data-role="navbar">
       <ul>
@@ -63,9 +60,6 @@
        <span>LOAD FONT</span>
        <input type="file" name="files[]" multiple data-role="none"/>
     </span>
-	 <!--
-    <a href="#" id="keybutton" class="ui-btn ui-corner-all ui-shadow ui-icon-edit ui-btn-icon-left">EDIT TEXT</a>
-	 -->
     <a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-action ui-btn-icon-right" onclick="make();">SUBMIT JOB</a>
   </div>
 </div> 
@@ -94,7 +88,7 @@
       <fieldset class="ui-field-contain">
 
          <label for="size">FONT SIZE (inch)</label>
-         <input name="size" id="size" value = 2 step="0.05" min="0.2"></input>
+         <input name="size" id="size" value = 1 step="0.05" min="0.2"></input>
 
         </select>
       </fieldset>
@@ -115,7 +109,7 @@
       <fieldset class="ui-field-contain">
 
          <label for="cradius">CUTOUT RADIUS (inch)</label>
-         <input type="number" name="cradius" id="cradius" value ="0.125" step="0.05" min="0"></input>
+         <input type="number" name="cradius" id="cradius" value ="0.25" step="0.05" min="0"></input>
 
         </select>
       </fieldset>
@@ -239,7 +233,6 @@ void draw(){
 	}
 
 	strokeWeight(2/sf2);
-	//translate((-(xmin)+30),abs(ymin)+5);
 	translate(30,abs(ymin)+5+cr+offset);
 	if(document.getElementById("cutout").checked==true){
    	//noStroke();
@@ -524,8 +517,7 @@ function loadfont() {
 
 function loadtxt() {
 
-   if(exfont==false){
-//      onFontLoaded(font)      
+   if(exfont==false){     
 
    opentype.load(fontFileName, function(err, font) 
    {
@@ -704,24 +696,22 @@ j2 = 1
 while(i>0){
    
    offsetted_paths = new ClipperLib.Paths()
-//   co.Execute(offsetted_paths,-((tool_diameter/2*25.4)*i) * scale)
-//   (6/(document.getElementById("size").value*scaleUp))
+
 
 if(i==1){
    co.Execute(offsetted_paths,-(tool_diameter/2*25.4) * scale)
-//   console.log(i)
+
 }
 else{
 
    co.Execute(offsetted_paths,-((tool_diameter/2*25.4)*j2) * scale)
-//   co.Execute(offsetted_paths,-(((tool_diameter/2*25.4)*2)+((tool_diameter/2*25.4)*i*0.8) * scale))
-//   console.log(j2)
+
 }
 
    j2+=0.7
 
    pocket.push(offsetted_paths)
-//   console.log(i);
+
    i++
    
 
@@ -767,7 +757,6 @@ for(j=0;j<pocket_o.length;j++){
    inpg = ClipperLib.Clipper.PointInPolygon(pt, pocket_o[j])
 
    if(inpg==1){
-   //console.log("pg: " + i + " is in pg: " + j);
       pocket[0].push(pocket_o[i])
       pocket_o.splice(i,1)
       i = i-1
@@ -856,7 +845,7 @@ for(i=0;i<pockets.length;i++){
 
 }
 
-//check
+
 
 check = 0;
 
@@ -870,10 +859,6 @@ for(i=0;i<pockets.length;i++){
 
 }
 
-//console.log(pockets)
-//console.log(check)
-//console.log(pocket_o)
-//console.log(pocket);
 
 for(i=0;i<pocket.length;i++){
    pocket[i].splice(0,0,pocket_o[i]);
@@ -884,32 +869,24 @@ for(i=0;i<pocket.length;i++){
 }
 
 var l2r = [];
-//order array from left to right
-//console.log(pocket)
 
 for(i=0;i<pocket.length;i++){
-   //console.log(pocket[i][0][0].X + " " + i);
    l2r.push({index:i, x:pocket[i][0][0].X});
 }
 
-//console.log(l2r);
 
 l2r.sort(function(a, b) {
     return parseFloat(a.x) - parseFloat(b.x);
 });
 
 pockets=[];
-//console.log(l2r)
 for(i=0;i<l2r.length;i++){
 
 pockets.push(pocket[l2r[i].index]);
 
 }
 
-//console.log(pockets)
 pocket = pockets
-
-
 
 xy_offset = []
 points = []
@@ -923,12 +900,8 @@ shape = []
 len = []
 svg = []
 
-//console.log(document.getElementById("thickness").value);
 
 material = eval('({' + (document.getElementById("material").value) + '})');
-
-//console.log(material.feed);
-//console.log(material.plunge);
 
 }
 
@@ -1009,11 +982,6 @@ g+="g0x"+ ((xmax+offset)/(6/(document.getElementById("size").value*scaleUp))).to
 g+="m5\n"
 g+="m30\n"
 
-//console.log(g)
-//console.log(pass_no)
-//console.log(pass_depth)
-
-
 
     fabmo.submitJob({
       file : g,
@@ -1068,27 +1036,7 @@ document.getElementById('font').addEventListener('click', function(){
 
 document.getElementById('loadfont').addEventListener('change', onReadFile, false);
 
-// toggle full screen
-function toggleFullScreen() {
-  if (!document.fullscreenElement &&    // alternative standard method
-      !document.mozFullScreenElement && !document.webkitFullscreenElement) {  // current working methods
-    if (document.documentElement.requestFullscreen) {
-      document.documentElement.requestFullscreen();
-    } else if (document.documentElement.mozRequestFullScreen) {
-      document.documentElement.mozRequestFullScreen();
-    } else if (document.documentElement.webkitRequestFullscreen) {
-      document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
-    }
-  } else {
-    if (document.cancelFullScreen) {
-      document.cancelFullScreen();
-    } else if (document.mozCancelFullScreen) {
-      document.mozCancelFullScreen();
-    } else if (document.webkitCancelFullScreen) {
-      document.webkitCancelFullScreen();
-    }
-  }
-}
+
 
 </script>
 
